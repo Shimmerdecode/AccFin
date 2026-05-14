@@ -342,30 +342,34 @@ function generateFullReport(scores, userName) {
             name: scaleUserNames[i],
             short: scaleShortNames[i],
             score: scores[i],
-            level: getLevel(scores[i]),
             description: strongDescriptions[i],
             leadershipAdvice: leadershipAdvice[i],
             reduceAdvice: reduceAdvice[i]
         });
     }
     
-    // 1. Сильные стороны (балл > 0)
-    let strongScales = allScales.filter(s => s.score > 0);
+    // 1. Сильные стороны (только лидерские шкалы 0-4, балл >= 6)
+    let strongScales = allScales.slice(0,5).filter(s => s.score >= 6);
     strongScales.sort((a, b) => b.score - a.score);
     
-    // 2. Лидерский потенциал (первые 5 шкал, балл >= 6)
-    let leadershipScales = allScales.slice(0,5).filter(s => s.score >= 6);
+    // 2. Что развивать в лидере (лидерские шкалы 0-4, балл <= 6)
+    let developLeadership = allScales.slice(0,5).filter(s => s.score <= 6);
     
-    // 3. Рекомендации по развитию лидерских качеств (первые 5 шкал, балл < 6)
-    let developLeadership = allScales.slice(0,5).filter(s => s.score < 6);
-    
-    // 4. Что снизить (исполнительские шкалы 6-13, балл > 6)
-    let reduceScales = allScales.slice(5,13).filter(s => s.score > 6);
+    // 3. Что снизить (только Неустойчив, Астенический, Лабильный, балл > 6)
+    // Индексы: 9 = Неустойчив, 10 = Астенический, 11 = Лабильный
+    let reduceScales = [];
+    let reduceIndices = [9, 10, 11];
+    for (let i = 0; i < reduceIndices.length; i++) {
+        let idx = reduceIndices[i];
+        if (allScales[idx] && allScales[idx].score > 6) {
+            reduceScales.push(allScales[idx]);
+        }
+    }
     
     // Формируем HTML
     let html = '<h2>' + userName + ', ваш результат</h2>';
     
-    // Блок 1: Сильные стороны (без баллов и уровней)
+    // Блок 1: Сильные стороны
     if (strongScales.length > 0) {
         html += '<div class="result-section"><h3>Ваши сильные стороны</h3>';
         for (let s of strongScales) {
@@ -377,19 +381,7 @@ function generateFullReport(scores, userName) {
         html += '</div>';
     }
     
-    // Блок 2: Лидерский потенциал (без баллов)
-    if (leadershipScales.length > 0) {
-        html += '<div class="result-section"><h3>Лидерский потенциал</h3>';
-        for (let s of leadershipScales) {
-            html += '<div class="result-item">';
-            html += '<div class="result-name"><strong>' + s.short + '</strong></div>';
-            html += '<div class="result-desc">' + s.description + '</div>';
-            html += '</div>';
-        }
-        html += '</div>';
-    }
-    
-    // Блок 3: Развитие лидерских качеств (без баллов)
+    // Блок 2: Что развивать в лидере
     if (developLeadership.length > 0) {
         html += '<div class="result-section"><h3>Что развивать в себе как в лидере</h3>';
         for (let s of developLeadership) {
@@ -401,7 +393,7 @@ function generateFullReport(scores, userName) {
         html += '</div>';
     }
     
-    // Блок 4: Что снизить (без баллов)
+    // Блок 3: Что снизить (только неустойчивость, астенизм, лабильность)
     if (reduceScales.length > 0) {
         html += '<div class="result-section"><h3>Что стоит снизить (балансировка)</h3>';
         for (let s of reduceScales) {
@@ -413,7 +405,7 @@ function generateFullReport(scores, userName) {
         html += '</div>';
     }
     
-    // Блок 5: Профессии (заглушка)
+    // Блок 4: Профессии (заглушка)
     html += '<div class="result-section"><h3>Рекомендуемые профессии</h3>';
     html += '<div class="result-item"><div class="result-desc">Скоро здесь появятся профессии, подходящие вашему профилю.</div></div>';
     html += '</div>';

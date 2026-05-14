@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Тест акцентуации характера | Профориентация</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Шапка -->
+        <div class="header">
+            <h1>🧠 Тест акцентуации характера</h1>
+            <p>Ответьте на 104 вопроса, чтобы узнать свои сильные стороны</p>
+        </div>
+
+        <!-- Информация о пользователе -->
+        <div class="user-info-card">
+            <div class="user-info-row">
+                <label for="userName">Ваше ФИО (или оставьте пустым для анонимного прохождения):</label>
+                <input type="text" id="userName" placeholder="" maxlength="50">
+            </div>
+        </div>
+
+        <!-- Прогресс -->
+        <div class="progress-container">
+            <div class="progress-info">
+                <span>Прогресс</span>
+                <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- Контейнер для вопросов -->
+        <div id="questionsContainer" class="questions-container"></div>
+
+        <!-- Кнопки управления -->
+        <div class="navigation-buttons">
+            <button id="prevBtn" class="nav-btn prev">◀ Назад</button>
+            <span id="pageIndicator" class="page-indicator">Страница 1 / 11</span>
+            <button id="nextBtn" class="nav-btn next">Далее ▶</button>
+        </div>
+
+    </div>
+
+    <!-- Модальное окно с результатами -->
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

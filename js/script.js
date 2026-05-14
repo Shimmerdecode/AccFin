@@ -436,11 +436,7 @@ function generateFullReport(scores, userName) {
     // 2. Что развивать в лидере (лидерские шкалы 0-4, балл <= 6)
     let developLeadership = allScales.slice(0,5).filter(s => s.score <= 6);
     
-    // 3. Что снизить (только Неустойчив, Астенический, Лабильный, балл > 6)
-    // Индексы: 9 = Неустойчив, 10 = Астенический, 11 = Лабильный
-    // 3. Что снизить (все исполнительские шкалы 5-11, балл > 6)
-// Индексы: 5=Психостен, 6=Сензитив, 7=Гипотим, 8=Конформист, 9=Неустойчив, 10=Астенический, 11=Лабильный
-// Циклоидный (12) не трогаем
+    // 3. Что снизить (исполнительские шкалы 5-11, балл > 6)
     let reduceIndices = [5, 6, 7, 8, 9, 10, 11];
     let reduceScales = [];
     for (let i = 0; i < reduceIndices.length; i++) {
@@ -477,7 +473,7 @@ function generateFullReport(scores, userName) {
         html += '</div>';
     }
     
-    // Блок 3: Что снизить (только неустойчивость, астенизм, лабильность)
+    // Блок 3: Что снизить
     if (reduceScales.length > 0) {
         html += '<div class="result-section"><h3>Что стоит снизить (балансировка)</h3>';
         for (let s of reduceScales) {
@@ -489,20 +485,23 @@ function generateFullReport(scores, userName) {
         html += '</div>';
     }
     
-    // Блок 4: Профессии (заглушка)
-    // Блок 4: Профессии (на основе топ-3 сильных лидерских шкал)
-    let topForProfessions = strongScales.slice(0, 3);
-    let professionsList = [];
-    for (let s of topForProfessions) {
-        if (scaleProfessions[s.short]) {
-            professionsList.push(...scaleProfessions[s.short]);
-        }
-    }
-    professionsList = [...new Set(professionsList)]; // убираем дубли
-
-    if (professionsList.length > 0) {
+    // Блок 4: Профессии (структурированно по шкалам, где балл > 6)
+    let allHighScales = allScales.filter(s => s.score > 6);
+    
+    if (allHighScales.length > 0) {
         html += '<div class="result-section"><h3>Рекомендуемые профессии</h3>';
-        html += '<div class="result-item"><div class="result-desc">' + professionsList.join(', ') + '</div></div>';
+        
+        for (let s of allHighScales) {
+            if (scaleProfessions[s.short] && scaleProfessions[s.short].length > 0) {
+                html += '<div class="result-item">';
+                html += '<div class="result-name"><strong>' + s.short + '</strong></div>';
+                html += '<div class="result-desc">';
+                for (let prof of scaleProfessions[s.short]) {
+                    html += '• ' + prof + '<br>';
+                }
+                html += '</div></div>';
+            }
+        }
         html += '</div>';
     } else {
         html += '<div class="result-section"><h3>Рекомендуемые профессии</h3>';
